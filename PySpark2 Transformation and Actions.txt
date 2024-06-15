@@ -1,0 +1,107 @@
+Transformations and actions are the two primary types of operations you can perform on a DataFrame in PySpark. Transformations create a new DataFrame from an existing one, while actions trigger the execution of the transformations and return results.
+
+Let's go through some common transformations and actions using a dataset.
+
+
+1. Import packages:
+
+from pyspark.sql import SparkSession
+from pyspark.sql.types import StructType, StructField, IntegerType, DoubleType
+from pyspark.sql import functions as F
+
+
+2. Create a Spark session
+
+# Create a Spark session
+spark = SparkSession.builder \
+    .appName("TransformationsAndActions") \
+    .getOrCreate()
+
+
+3. Define a schema:
+
+# Define schema for the data
+schema = StructType([
+    StructField("user_id", IntegerType(), True),
+    StructField("transaction_amount", DoubleType(), True)
+])
+
+
+4. Create a Dataframe:
+
+# Create the DataFrame manually (since we don't have the actual CSV file, we simulate the data)
+data = [(5, 545.92), (98, 386.07), (30, 577.02)]
+df = spark.createDataFrame(data, schema=schema)
+
+
+6. Show DataFrame: 
+
+# Show the DataFrame
+df.show()
+
+
+Transformations:
+
+1.Select Columns: Select specific columns from the DataFrame.
+
+df_selected = df.select("user_id", "transaction_amount")
+df_selected.show()
+
+
+2. Filter Rows: Filter rows based on a condition.
+df_filtered = df.filter(df["transaction_amount"] > 500)
+df_filtered.show()
+
+
+
+3. Add New Column: Add a new column with a calculated value.
+
+df_with_new_column = df.withColumn("transaction_with_tax", df["transaction_amount"] * 1.1)
+df_with_new_column.show()
+
+
+4.Group By and Aggregate: Group by a column and perform an aggregation.
+
+df_grouped = df.groupBy("user_id").agg(F.sum("transaction_amount").alias("total_amount"))
+df_grouped.show()
+
+
+5.Sort Rows: Sort the DataFrame based on a column.
+
+df_sorted = df.orderBy("transaction_amount", ascending=False)
+df_sorted.show()
+
+
+
+Actions:
+
+1. Show Data: Display the content of the DataFrame (used above in transformations as well).
+
+df.show()
+
+2. Collect: Return all the rows as a list of Row objects.
+
+collected_data = df.collect()
+print(collected_data)
+
+3.Count: Count the number of rows in the DataFrame.
+
+row_count = df.count()
+print(f"Row count: {row_count}")
+
+4.Take: Return the first n rows.
+first_two_rows = df.take(2)
+print(first_two_rows)
+
+5.Describe: Compute summary statistics.
+df.describe().show()
+
+6. First: Return the first row.
+first_row = df.first()
+print(first_row)
+
+
+
+
+
+
